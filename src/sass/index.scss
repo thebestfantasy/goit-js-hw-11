@@ -1,2 +1,14 @@
 @import './common';
 @import './example';
+
+.search-form {
+    background-color: blue;
+    display: flex;
+    justify-content: center;
+    padding: 15px;
+}
+
+input {
+   height: 30px;
+   padding: 10px;
+}
