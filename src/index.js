@@ -18,18 +18,19 @@ async function handlerSearchForm(evt) {
     }
     
     const pictures = await servicePicture(searchQuery);
+    
+    console.log(pictures);
 };
 
 async function servicePicture(str) {
     const urlQuery = `${BASE_URL}key=${KEY}&q=${str}&${FILTER}`;
     const response = await axios.get(urlQuery);
     
-    // if (!response.ok) {
-    //     throw new Error(response.statusText);
-    // }
+    if (!response.ok) {
+        throw new Error(response.statusText);
+    }
 
-    console.log(response);
-    // return response.json();
+    return response.data;
 }
     
 function createMarkup(arr) {
