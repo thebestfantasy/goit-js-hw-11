@@ -18,9 +18,9 @@ async function handlerSearchForm(evt) {
         return
     }
     
-    const pictures = await servicePicture(searchQuery)
-        .then(data => 
-            imgList.insertAdjacentHTML = ('beforeend', createMarkup(data.hits)))
+    const pictures = await servicePicture(searchQuery);
+    imgList.innerHTML = createMarkup(pictures);   
+            // imgList.insertAdjacentHTML = ('beforeend', createMarkup(data.hits))
         
     console.log(pictures);
 };
