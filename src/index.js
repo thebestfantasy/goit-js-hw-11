@@ -1,4 +1,5 @@
 const axios = require('axios').default;
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 const searchForm = document.querySelector('.search-form');
 const imgList = document.querySelector('.js-list');
@@ -17,33 +18,37 @@ async function handlerSearchForm(evt) {
         return
     }
     
-    const pictures = await servicePicture(searchQuery);
-    
+    const pictures = await servicePicture(searchQuery)
+        .then(data => 
+            imgList.insertAdjacentHTML = ('beforeend', createMarkup(data.hits)))
+        
     console.log(pictures);
 };
 
 async function servicePicture(str) {
+    try {
     const urlQuery = `${BASE_URL}key=${KEY}&q=${str}&${FILTER}`;
     const response = await axios.get(urlQuery);
     
-    if (!response.ok) {
-        throw new Error(response.statusText);
-    }
+    // if (!response.ok) {
+    //     throw new Error(response.statusText);
+    // }
 
-    return response.data;
+        return response.data;
+    } catch (err) {
+        console.log(err);
+    }
 }
     
 function createMarkup(arr) {
-    return arr.map(({webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => `<li>
-        <a href="${largeImageURL}"></a>
+    return arr.map(({webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => `<a href="${largeImageURL}"></a>
         <img src="${webformatURL}" alt="${tags}" />
         <div>
           <p><b>Likes: ${likes}</b></p>
           <p><b>Views: ${views}</b></p>
           <p><b>Comments: ${comments}</b></p>
           <p><b>Downloads: ${downloads}</b></p>
-        </div>
-      </li>`)
+        </div>`).join('')
 };
 
 function deleteMarkup() {
