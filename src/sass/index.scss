@@ -1,6 +1,34 @@
 @import './common';
 @import './example';
 
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+ul {
+    padding: 0;
+    margin: 0;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+.list {
+    list-style: none;
+}
+
 .search-form {
     background-color: blue;
     display: flex;
@@ -8,7 +36,46 @@
     padding: 15px;
 }
 
+.input {
+    border-radius: 3px;
+}
+
 input {
    height: 30px;
    padding: 10px;
+}
+
+.load-more {
+    display: block;
+    visibility: hidden;
+    margin: 30px auto;
+}
+
+.img-box {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding-top: 10px;
+}
+
+.photo-card {
+    width: 400px;
+    height: 250px;
+    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.5);
+}
+
+.images {
+    width: 100%;
+    height: 200px;
+}
+
+.info {
+    display: flex;
+    justify-content: center;
+    padding: 5px;
+}
+
+.info-item { 
+    text-align: center;
 }
