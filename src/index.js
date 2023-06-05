@@ -12,9 +12,9 @@ const KEY = '36982386-348bf5f111e16de042d4f4c47';
 const FILTER = 'image_type=photo&orientation=horizontal&safesearch=true&per_page=40';
 let page = 1;
 
-const options = {
-    // captionsData: "alt",
-    // captionDelay: 250
+const simpleLBoptions = {
+    captionsData: "alt",
+    captionDelay: 250
 };
 
 searchForm.addEventListener('submit', handlerSearch);
@@ -43,9 +43,6 @@ function handlerSearch(evt) {
 function servicePicture(searchQuery) {
     fetchPictures(searchQuery)
         .then(resp => {
-            console.log(resp);
-            console.log(page);
-
             if (resp.data.hits.length === 0) {
                 moreBtn.style.visibility = 'hidden';
                 deleteMarkup();
@@ -62,13 +59,14 @@ function servicePicture(searchQuery) {
                 moreBtn.style.visibility = 'hidden';
             }
             imgList.insertAdjacentHTML('beforeend', createMarkup(resp.data.hits));
-            galleryLightbox.refresh();
+            gallerySimple.refresh();
+            scroll();
             Notify.success(`Hooray! We found ${resp.data.totalHits} images.`);  
         })
 }
     
 function createMarkup(arr) {
-    return arr.map(({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => `<div class="gallery photo-card">
+    return arr.map(({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => `<div class="photo-card">
     <a href="${largeImageURL}"><img src="${webformatURL}" alt="${tags}" loading="lazy" class="images"/></a>       
         <div class="info">
           <p class="info-item"><b>Likes: ${likes}</b></p>
@@ -78,7 +76,16 @@ function createMarkup(arr) {
         </div></div>`).join('')
 };
 
-const gallerySimple = new SimpleLightbox('.gallery a', options);
+const gallerySimple = new SimpleLightbox('.gallery a', simpleLBoptions);
+
+function scroll() {
+    const { height: cardHeight } = document.querySelector(".gallery").firstElementChild.getBoundingClientRect();
+
+    window.scrollBy({
+    top: cardHeight * 2,
+    behavior: "smooth",
+    });
+}
 
 function deleteMarkup() {
     imgList.innerHTML = '';
