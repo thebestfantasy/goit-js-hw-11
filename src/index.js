@@ -1,6 +1,6 @@
-const axios = require('axios').default;
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import { fetchPictures } from './fetch.js';
+import { createMarkup } from './createMarkup.js';
 import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
 
@@ -11,6 +11,7 @@ const BASE_URL = 'https://pixabay.com/api/?';
 const KEY = '36982386-348bf5f111e16de042d4f4c47';
 const FILTER = 'image_type=photo&orientation=horizontal&safesearch=true&per_page=40';
 let page = 1;
+let searchQuery = '';
 
 const simpleLBoptions = {
     captionsData: "alt",
@@ -18,30 +19,29 @@ const simpleLBoptions = {
 };
 
 searchForm.addEventListener('submit', handlerSearch);
+moreBtn.addEventListener('click', servicePicture);
 
 function handlerSearch(evt) {
     evt.preventDefault();
+    deleteMarkup();
 
     const data = new FormData(evt.currentTarget);
-    const searchQuery = data.get('searchQuery').trim();
+    const inputValue = data.get('searchQuery').trim();
+    
+    searchQuery = inputValue;
     
     if (!searchQuery) {
         Notify.failure('Type your query');
         return
     }
     
-    const URL = `${BASE_URL}key=${KEY}&page=${page}&q=${searchQuery}&${FILTER}`;
-    servicePicture(URL);
-   
-    
-    moreBtn.addEventListener('click', () => {
-        page += 1;
-        servicePicture(`${BASE_URL}key=${KEY}&page=${page}&q=${searchQuery}&${FILTER}`)
-    });
+    page = 1;
+    servicePicture(searchQuery);  
+    evt.currentTarget.reset();
 };
 
-function servicePicture(searchQuery) {
-    fetchPictures(searchQuery)
+function servicePicture(inputValue) {
+    fetchPictures(searchQuery, page)
         .then(resp => {
             if (resp.data.hits.length === 0) {
                 moreBtn.style.visibility = 'hidden';
@@ -58,24 +58,17 @@ function servicePicture(searchQuery) {
             if (page * 40 > resp.data.totalHits) {
                 moreBtn.style.visibility = 'hidden';
             }
+            page += 1;
             imgList.insertAdjacentHTML('beforeend', createMarkup(resp.data.hits));
             gallerySimple.refresh();
             scroll();
             Notify.success(`Hooray! We found ${resp.data.totalHits} images.`);  
         })
+        .catch((err) => { 
+            console.log(err);
+        })
 }
     
-function createMarkup(arr) {
-    return arr.map(({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => `<div class="photo-card">
-    <a href="${largeImageURL}"><img src="${webformatURL}" alt="${tags}" loading="lazy" class="images"/></a>       
-        <div class="info">
-          <p class="info-item"><b>Likes: ${likes}</b></p>
-          <p class="info-item"><b>Views: ${views}</b></p>
-          <p class="info-item"><b>Comments: ${comments}</b></p>
-          <p class="info-item"><b>Downloads: ${downloads}</b></p>
-        </div></div>`).join('')
-};
-
 const gallerySimple = new SimpleLightbox('.gallery a', simpleLBoptions);
 
 function scroll() {
