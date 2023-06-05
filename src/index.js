@@ -61,8 +61,8 @@ function servicePicture(searchQuery) {
             if (page * 40 > resp.data.totalHits) {
                 moreBtn.style.visibility = 'hidden';
             }
-            
             imgList.insertAdjacentHTML('beforeend', createMarkup(resp.data.hits));
+            galleryLightbox.refresh();
             Notify.success(`Hooray! We found ${resp.data.totalHits} images.`);  
         })
 }
