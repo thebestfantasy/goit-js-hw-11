@@ -1,6 +1,8 @@
 const axios = require('axios').default;
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import { fetchPictures } from './fetch.js';
+import SimpleLightbox from "simplelightbox";
+import "simplelightbox/dist/simple-lightbox.min.css";
 
 const searchForm = document.querySelector('#search-form');
 const imgList = document.querySelector('.js-list');
@@ -8,8 +10,12 @@ const moreBtn = document.querySelector('.js-load-more');
 const BASE_URL = 'https://pixabay.com/api/?';
 const KEY = '36982386-348bf5f111e16de042d4f4c47';
 const FILTER = 'image_type=photo&orientation=horizontal&safesearch=true&per_page=40';
-
 let page = 1;
+
+const options = {
+    // captionsData: "alt",
+    // captionDelay: 250
+};
 
 searchForm.addEventListener('submit', handlerSearch);
 
@@ -62,7 +68,7 @@ function servicePicture(searchQuery) {
 }
     
 function createMarkup(arr) {
-    return arr.map(({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => `<div class="photo-card">
+    return arr.map(({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => `<div class="gallery photo-card">
     <a href="${largeImageURL}"><img src="${webformatURL}" alt="${tags}" loading="lazy" class="images"/></a>       
         <div class="info">
           <p class="info-item"><b>Likes: ${likes}</b></p>
@@ -71,6 +77,8 @@ function createMarkup(arr) {
           <p class="info-item"><b>Downloads: ${downloads}</b></p>
         </div></div>`).join('')
 };
+
+const gallerySimple = new SimpleLightbox('.gallery a', options);
 
 function deleteMarkup() {
     imgList.innerHTML = '';
